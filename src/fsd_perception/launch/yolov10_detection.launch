@@ -1,0 +1,24 @@
+<launch>
+  <!-- YOLOv10 Cone Detection Node -->
+  <node name="yolov10_detector" 
+        pkg="fsd_perception" 
+        type="yolov10_detector.py" 
+        output="screen">
+    
+    <!-- Model path -->
+    <param name="model_path" 
+           value="$(find fsd_perception)/models/yolov10/best.pt"/>
+    
+    <!-- Detection parameters -->
+    <param name="confidence_threshold" value="0.5"/>
+    
+    <!-- Image topic (change based on your camera) -->
+    <param name="image_topic" value="/zed/left/image_raw"/>
+    <param name="use_compressed" value="false"/>
+  </node>
+
+  <!-- RViz for visualization -->
+  <node name="rviz" pkg="rviz" type="rviz" 
+        args="-d $(find fsd_perception)/config/detection.rviz"/>
+
+</launch>

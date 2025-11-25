@@ -1,0 +1,59 @@
+<launch>
+  <!-- ========== SIMULATION ========== -->
+  <!-- Start Gazebo with track -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find fsd_perception)/worlds/fsd_track.world"/>
+    <arg name="paused" value="false"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="true"/>
+  </include>
+
+  <!-- Spawn car -->
+  <param name="robot_description" 
+         command="$(find xacro)/xacro '$(find fsd_perception)/urdf/fsd_car.urdf.xacro'"/>
+  
+  <node name="spawn_car" pkg="gazebo_ros" type="spawn_model"
+        args="-urdf -param robot_description -model fsd_car"/>
+
+  <!-- ========== PERCEPTION NODES ========== -->
+  
+  <!-- 1. YOLOv10 Camera Detection -->
+  <node name="yolov10_detector" 
+        pkg="fsd_perception" 
+        type="yolov10_detector.py" 
+        output="screen">
+    <param name="model_path" 
+           value="$(find fsd_perception)/models/yolov10/best.pt"/>
+    <param name="confidence_threshold" value="0.5"/>
+    <param name="image_topic" value="/zed/left/image_raw"/>
+  </node>
+
+  <!-- 2. LiDAR Cone Detection -->
+  <node name="lidar_detector" 
+        pkg="fsd_perception" 
+        type="lidar_cone_detector.py" 
+        output="screen">
+    <param name="cluster_tolerance" value="0.3"/>
+    <param name="min_range" value="0.5"/>
+    <param name="max_range" value="15.0"/>
+  </node>
+
+  <!-- 3. Camera-LiDAR Fusion -->
+  <node name="sensor_fusion" 
+        pkg="fsd_perception" 
+        type="sensor_fusion.py" 
+        output="screen">
+    <param name="fusion_threshold" value="0.8"/>
+    <param name="use_depth_map" value="true"/>
+  </node>
+
+  <!-- ========== VISUALIZATION ========== -->
+  
+  <!-- RViz -->
+  <node name="rviz" pkg="rviz" type="rviz" 
+        args="-d $(find fsd_perception)/config/perception.rviz"/>
+
+  <!-- Optional: rqt_image_view for debug -->
+  <!-- <node name="image_view" pkg="rqt_image_view" type="rqt_image_view"/> -->
+
+</launch>

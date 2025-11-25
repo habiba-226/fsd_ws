@@ -1,0 +1,9 @@
+build/
+devel/
+install/
+logs/
+*.pyc
+*.swp
+*.swo
+*.log
+src/.catkin_tools/
