@@ -180,7 +180,7 @@ class LidarConeDetector:
         for i, cone in enumerate(cones):
             marker = Marker()
             marker.header = header
-            marker.header.frame_id = "laser"  # or "lidar_link"
+            marker.header.frame_id = "laser_link"  # or "lidar_link"
             marker.id = i
             marker.type = Marker.CYLINDER
             marker.action = Marker.ADD
