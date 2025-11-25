@@ -26,7 +26,7 @@ class YOLOv10ConeDetector:
         try:
             self.model = YOLO(self.model_path)
             self.model.conf = self.conf_threshold
-            rospy.loginfo("✅ YOLOv10 model loaded successfully!")
+            rospy.loginfo("YOLOv10 model loaded successfully!")
         except Exception as e:
             rospy.logerr(f"Failed to load model: {e}")
             return
@@ -179,7 +179,7 @@ class YOLOv10ConeDetector:
         """Create RViz marker for visualization"""
         marker = Marker()
         marker.header = header
-        marker.header.frame_id = "zed_camera_link"
+        marker.header.frame_id = header.frame_id
         marker.id = marker_id
         marker.type = Marker.CUBE
         marker.action = Marker.ADD
